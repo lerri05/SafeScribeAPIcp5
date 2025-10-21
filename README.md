@@ -142,10 +142,9 @@ SafeScribeAPI
 👥 Autores
 
 Nome	RM	GitHub
-Lucas Lerri de Almeida	554635	@lerri05
+Lucas Lerri de Almeida	  554635	@lerri05
 Fernanda Budniak de Seda	558274	@Febudniak
 Karen Marques dos Santos	554556	@KarenMarquesS
  
-lerri05 - Overview
-lerri05 has 4 repositories available. Follow their code on GitHub.
+
  
