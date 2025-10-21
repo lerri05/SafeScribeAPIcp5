@@ -109,6 +109,7 @@ A aplicação permite o **registro, login e gerenciamento de notas** de forma se
 ---
  
 ## 🗂 Estrutura do Projeto
+ ```
   SafeScribeAPI
   ├── Controllers
   │   ├── AuthController.cs
@@ -136,7 +137,7 @@ A aplicação permite o **registro, login e gerenciamento de notas** de forma se
   │   └── PasswordHasher.cs
   ├── appsettings.json
   └── Program.cs
-
+```
   ---
  
 ## 🚧 Status da Aplicação
