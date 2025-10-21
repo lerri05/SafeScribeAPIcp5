@@ -1,5 +1,9 @@
-using SafeScribe.Api.Models;
-public interface ITokenService
+using SafeScribeAPI.Models;
+
+namespace SafeScribeAPI.Services
 {
-    string GenerateToken(User user, out DateTime expiresAt);
+    public interface ITokenService
+    {
+        string GenerateToken(User user, out DateTime expiresAt);
+    }
 }

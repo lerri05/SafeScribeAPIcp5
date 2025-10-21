@@ -1,56 +1,41 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using SafeScribe.Api.Models;
+using Microsoft.IdentityModel.Tokens;
+using SafeScribeAPI.Models;
 
-
-public class TokenService : ITokenService
+namespace SafeScribeAPI.Services
 {
-    private readonly IConfiguration _config;
-    private readonly string _key;
-    private readonly string _issuer;
-    private readonly string _audience;
-    private readonly int _expireMinutes;
-
-
-    public TokenService(IConfiguration config)
+    public class TokenService : ITokenService
     {
-        _config = config;
-        _key = _config["Jwt:Key"];
-        _issuer = _config["Jwt:Issuer"];
-        _audience = _config["Jwt:Audience"];
-        _expireMinutes = int.Parse(_config["Jwt:ExpireMinutes"] ?? "60");
-    }
+        private readonly IConfiguration _config;
 
+        public TokenService(IConfiguration config)
+        {
+            _config = config;
+        }
 
-    public string GenerateToken(User user, out DateTime expiresAt)
-    {
-        var claims = new List<Claim>
-{
-new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-new Claim(ClaimTypes.Role, user.Role),
-new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-};
+        public string GenerateToken(User user, out DateTime expiresAt)
+        {
+            var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key n�o configurado"));
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
+            expiresAt = DateTime.UtcNow.AddHours(2);
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: expiresAt,
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            );
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-
-        expiresAt = DateTime.UtcNow.AddMinutes(_expireMinutes);
-
-
-        var token = new JwtSecurityToken(
-        issuer: _issuer,
-        audience: _audience,
-        claims: claims,
-        expires: expiresAt,
-        signingCredentials: creds
-        );
-
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        }
     }
 }

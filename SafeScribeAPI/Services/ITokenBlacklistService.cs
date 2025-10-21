@@ -1,5 +1,8 @@
-public interface ITokenBlacklistService
+namespace SafeScribeAPI.Services
 {
-    Task AddToBlacklistAsync(string jti);
-    Task<bool> IsBlacklistedAsync(string jti);
+    public interface ITokenBlacklistService
+    {
+        Task AddToBlacklistAsync(string jti);
+        bool IsTokenBlacklisted(string jti);
+    }
 }

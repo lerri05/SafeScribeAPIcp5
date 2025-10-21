@@ -1,17 +1,20 @@
-public class InMemoryTokenBlacklistService : ITokenBlacklistService
+using System.Collections.Concurrent;
+
+namespace SafeScribeAPI.Services
 {
-    private readonly HashSet<string> _blacklist = new();
-
-
-    public Task AddToBlacklistAsync(string jti)
+    public class InMemoryTokenBlacklistService : ITokenBlacklistService
     {
-        _blacklist.Add(jti);
-        return Task.CompletedTask;
-    }
+        private readonly ConcurrentDictionary<string, DateTime> _blacklist = new();
 
+        public Task AddToBlacklistAsync(string jti)
+        {
+            _blacklist[jti] = DateTime.UtcNow;
+            return Task.CompletedTask;
+        }
 
-    public Task<bool> IsBlacklistedAsync(string jti)
-    {
-        return Task.FromResult(_blacklist.Contains(jti));
+        public bool IsTokenBlacklisted(string jti)
+        {
+            return _blacklist.ContainsKey(jti);
+        }
     }
 }

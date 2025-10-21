@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SafeScribeAPI;
 using SafeScribeAPI.Data;
 using SafeScribeAPI.Middleware;
 using SafeScribeAPI.Services;
@@ -20,7 +21,7 @@ builder.Services.AddControllers();
 
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["Key"];
+var secretKey = jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key não configurada");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -31,16 +32,16 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true, 
-        ValidateAudience = true, 
-        ValidateLifetime = true, 
-        ValidateIssuerSigningKey = true, 
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-        ClockSkew = TimeSpan.Zero 
+        ClockSkew = TimeSpan.Zero
+    };
 });
-
 
 builder.Services.AddAuthorization();
 
@@ -55,7 +56,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API segura para gerenciamento de notas e autenticação JWT"
     });
 
-    
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -81,14 +81,13 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 var app = builder.Build();
 
 
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    DbInitializer.Initialize(dbContext);
+    await DbInitializer.InitializeAsync(dbContext);
 }
 
 
@@ -100,9 +99,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
 app.UseAuthentication();
-app.UseMiddleware<JwtBlacklistMiddleware>(); 
+app.UseMiddleware<JwtBlacklistMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,17 +1,18 @@
 using SafeScribeAPI.Data;
 using SafeScribeAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SafeScribeAPI
 {
     public static class DbInitializer
     {
-        public static void Initialize(ApplicationDbContext context)
+        public static async Task InitializeAsync(ApplicationDbContext context)
         {
             
-            context.Database.EnsureCreated();
+            await context.Database.EnsureCreatedAsync();
 
             
-            if (context.Users.Any())
+            if (await context.Users.AnyAsync())
                 return;
 
            
@@ -32,7 +33,7 @@ namespace SafeScribeAPI
             };
 
             context.Users.AddRange(users);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             
             var notes = new List<Note>
@@ -52,7 +53,7 @@ namespace SafeScribeAPI
             };
 
             context.Notes.AddRange(notes);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

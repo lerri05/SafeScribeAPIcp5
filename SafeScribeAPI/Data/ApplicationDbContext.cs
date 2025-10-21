@@ -10,7 +10,7 @@ namespace SafeScribeAPI.Data
         {
         }
 
-        
+        // Tabelas do banco
         public DbSet<User> Users { get; set; }
         public DbSet<Note> Notes { get; set; }
 
@@ -18,7 +18,7 @@ namespace SafeScribeAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            
+            // Configuração da entidade User
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(u => u.Id);
@@ -34,14 +34,13 @@ namespace SafeScribeAPI.Data
                       .IsRequired()
                       .HasMaxLength(50);
 
-                
                 entity.HasMany(u => u.Notes)
                       .WithOne(n => n.User)
                       .HasForeignKey(n => n.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            
+            // Configuração da entidade Note
             modelBuilder.Entity<Note>(entity =>
             {
                 entity.HasKey(n => n.Id);
@@ -60,7 +59,7 @@ namespace SafeScribeAPI.Data
                       .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 
-            
+            // Dados iniciais (seeding)
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -78,7 +77,6 @@ namespace SafeScribeAPI.Data
                 }
             );
 
-            
             modelBuilder.Entity<Note>().HasData(
                 new Note
                 {

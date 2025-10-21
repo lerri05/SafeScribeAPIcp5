@@ -1,6 +1,9 @@
-public static class UserRoles
+namespace SafeScribeAPI.Models
 {
-    public const string Reader = "Leitor";
-    public const string Editor = "Editor";
-    public const string Admin = "Admin";
+    public static class UserRoles
+    {
+        public const string Reader = "Reader";
+        public const string Editor = "Editor";
+        public const string Admin = "Admin";
+    }
 }

@@ -1,33 +1,30 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.JsonWebTokens;
+using SafeScribeAPI.Services;
 using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Security.Claims;
 
-
-public class JwtBlacklistMiddleware
+namespace SafeScribeAPI.Middleware
 {
-    private readonly RequestDelegate _next;
-
-
-    public JwtBlacklistMiddleware(RequestDelegate next)
+    public class JwtBlacklistMiddleware
     {
-        _next = next;
-    }
+        private readonly RequestDelegate _next;
 
+        public JwtBlacklistMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
 
-    public async Task Invoke(HttpContext context, ITokenBlacklistService blacklist)
-    {
-        if (context.User.Identity?.IsAuthenticated == true)
+        public async Task InvokeAsync(HttpContext context, ITokenBlacklistService blacklistService)
         {
             var jti = context.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
-            if (jti != null && await blacklist.IsBlacklistedAsync(jti))
+            if (jti != null && blacklistService.IsTokenBlacklisted(jti))
             {
-                context.Response.StatusCode = 401;
-                await context.Response.WriteAsync("Token blacklisted");
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return;
             }
+
+            await _next(context);
         }
-        await _next(context);
     }
 }
