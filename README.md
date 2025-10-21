@@ -111,32 +111,47 @@ A aplicação permite o **registro, login e gerenciamento de notas** de forma se
 ## 🗂 Estrutura do Projeto
  ```
   SafeScribeAPI
-  ├── Controllers
-  │   ├── AuthController.cs
-  │   └── NotesController.cs
-  ├── Data
-  │   ├── ApplicationDbContext.cs
-  │   └── DbInitializer.cs
-  ├── DTOs
-  │   ├── UserRegisterDto.cs
-  │   ├── LoginRequestDto.cs
-  │   ├── NoteCreateDto.cs
-  │   └── NoteDto.cs
-  ├── Middleware
-  │   └── JwtBlacklistMiddleware.cs
-  ├── Models
-  │   ├── User.cs
-  │   ├── Note.cs
-  │   └── UserRoles.cs
-  ├── Services
-  │   ├── ITokenService.cs
-  │   ├── TokenService.cs
-  │   ├── ITokenBlacklistService.cs
-  │   └── InMemoryTokenBlacklistService.cs
-  ├── Helpers
-  │   └── PasswordHasher.cs
-  ├── appsettings.json
-  └── Program.cs
+├── Controllers
+│   ├── AuthController.cs
+│   └── NotesController.cs
+│
+├── DTOs
+│   ├── ChangePasswordDto.cs
+│   ├── LoginRequestDto.cs
+│   ├── NoteCreateDto.cs
+│   ├── NoteDto.cs
+│   └── UserRegisterDto.cs
+│
+├── Data
+│   ├── ApplicationDbContext.cs
+│   └── DbInitializer.cs
+│
+├── Helpers
+│   └── PasswordHasher.cs
+│
+├── Middleware
+│   └── JwtBlacklistMiddleware.cs
+│
+├── Models
+│   ├── Note.cs
+│   ├── User.cs
+│   └── UserRoles.cs
+│
+├── Properties
+│   └── launchSettings.json
+│
+├── Services
+│   ├── ITokenBlacklistService.cs
+│   ├── ITokenService.cs
+│   ├── InMemoryTokenBlacklistService.cs
+│   └── TokenService.cs
+│
+├── Program.cs
+├── SafeScribeAPI.csproj
+├── appsettings.json
+├── .gitattributes
+└── .gitignore
+
 ```
   ---
  
